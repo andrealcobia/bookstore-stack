@@ -1,0 +1,80 @@
+services:
+  db:
+    container_name: bookstore-mysql
+    image: mysql:8
+    secrets:
+      - db-password
+    environment:
+      MYSQL_ROOT_PASSWORD: /run/secrets/db-password
+    ports:
+      - "3306:3306"
+    expose:
+      - 3306
+    networks:
+      - app-network
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test:
+        ["CMD-SHELL", "mysqladmin ping -h localhost -p$$MYSQL_ROOT_PASSWORD"]
+      interval: 5s
+      timeout: 2s
+      retries: 10
+  bookstore-spring:
+    container_name: bookstore-spring
+    build:
+      context: ./bookstore-spring
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+      - "8084:8084"
+    networks:
+      - app-network
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://bookstore-mysql:3306/bookdb?createDatabaseIfNotExist=TRUE
+      - SPRING_DATASOURCE_USERNAME=book_user
+      - SPRING_DATASOURCE_PASSWORD=book_password
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -f http://localhost:8084/management/health || exit 1",
+        ]
+      interval: 10s
+      timeout: 1s
+      retries: 30
+    depends_on:
+      db:
+        condition: service_healthy
+  bookstore-angular:
+    container_name: bookstore-angular
+    build:
+      context: ./bookstore-angular
+      dockerfile: Dockerfile
+    environment:
+      #NGINX_ENVSUBST_OUTPUT_DIR: /etc/nginx
+      API_HOST: bookstore-spring
+    ports:
+      - "8081:8081"
+      - "8085:8085"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8085/health || exit 1"]
+      interval: 10s
+      timeout: 1s
+      retries: 30
+    depends_on:
+      bookstore-spring:
+        condition: service_healthy
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  db-data:
+secrets:
+  db-password:
+    file: db/password.txt
