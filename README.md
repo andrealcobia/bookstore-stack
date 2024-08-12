@@ -14,6 +14,6 @@ docker-compose build && docker-compose up -d
 
 This script will start:
 
-- one `Mysql` Docker container;
-- one `` Docker container;
-- one `` Docker container;
+- one `mysql` Docker container;
+- one `bookstore-spring` Docker container;
+- one `bookstore-angular` Docker container;
