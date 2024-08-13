@@ -56,8 +56,8 @@ Before running this project, ensure that you have the following installed on you
 To start the entire stack (Angular frontend, Spring Boot backend, and MySQL database), run the following command from the root directory:
 
  ```bash
-  docker-compose up --build
-
+ docker-compose up --build
+ ```
 This command will:
 
 - Start the MySQL database and initialize it with the necessary schema.
