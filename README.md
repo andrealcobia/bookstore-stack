@@ -18,25 +18,7 @@ Bootstore-Stack is a full-stack web application that provides a web interface fo
 
 ## Project Structure
 
-bootstore-stack/
-│
-├── bookstore-angular/ # Angular frontend application
-│ ├── src/
-│ ├── angular.json
-│ └── ...
-│
-├── bookstore-spring/ # Spring Boot backend application
-│ ├── src/
-│ ├── pom.xml
-│ └── ...
-│
-├── mysql/ # MySQL database configuration
-│ ├── init.sql
-│ └── ...
-│
-├── docker-compose.yml # Docker Compose file to manage the stack
-└── README.md # Project documentation
-
+![image](https://github.com/user-attachments/assets/bc891594-baed-4e0f-bfa4-ecddd0cb0e26)
 
 ## Prerequisites
 
